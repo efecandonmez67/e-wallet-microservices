@@ -1,0 +1,7 @@
+# IntelliJ IDEA ayar klasörü
+.idea/
+*.iml
+
+# İşletim sistemi kalıntıları
+.DS_Store
+Thumbs.db

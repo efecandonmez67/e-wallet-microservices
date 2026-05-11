@@ -1,0 +1,48 @@
+services:
+  account-db:
+    image: postgres:15-alpine
+    container_name: account-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: account_db
+    ports:
+      - "5441:5432"
+    networks:
+      - e-wallet-network
+    volumes:
+      - account-db-data:/var/lib/postgresql/data
+
+  transaction-db:
+    image: postgres:15-alpine
+    container_name: transaction-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: transaction_db
+    ports:
+      - "5442:5432"
+    networks:
+      - e-wallet-network
+    volumes:
+      - transaction-db-data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - e-wallet-network
+
+networks:
+  e-wallet-network:
+    driver: bridge
+
+volumes:
+  account-db-data:
+  transaction-db-data:

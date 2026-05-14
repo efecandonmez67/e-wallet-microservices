@@ -8,12 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/accounts")
 public class AccountController {
 
     private final AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
 
     @PostMapping
     public ResponseEntity<Account> createAccount(@RequestBody CreateAccountRequest request) {
@@ -26,6 +32,12 @@ public class AccountController {
     public ResponseEntity<Account> getAccount(@PathVariable Long userId) {
         Account account= accountService.getAccountByUserId(userId);
         return ResponseEntity.ok(account);
+    }
+
+    @PutMapping("/{id}/balance")
+    public ResponseEntity<Void> updateBalance(@PathVariable Long id, @RequestParam BigDecimal amount) {
+        accountService.updateBalance(id, amount);
+        return ResponseEntity.ok().build();
     }
 
 }

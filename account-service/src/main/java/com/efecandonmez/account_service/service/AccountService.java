@@ -6,11 +6,16 @@ import com.efecandonmez.account_service.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
-@RequiredArgsConstructor
 public class AccountService {
 
     private final AccountRepository accountRepository;
+
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public Account createAccount(Long userId) {
         Account newAccount = Account.builder()
@@ -23,6 +28,16 @@ public class AccountService {
     public Account getAccountByUserId(Long userId) {
         return accountRepository.findByUserId(userId)
                 .orElseThrow(() -> new AccountNotFoundException("No account found for this user. UserId: " + userId));
+    }
+
+    public void updateBalance(Long userId, BigDecimal amount) {
+        Account account = accountRepository.findById(userId).orElseThrow(
+                () -> new AccountNotFoundException("No account found for this user. UserId: " + userId)
+        );
+
+        account.setBalance(account.getBalance().add(amount));
+        accountRepository.save(account);
+
     }
 
 }

@@ -4,7 +4,6 @@ import com.efecandonmez.transaction_service.client.AccountServiceClient;
 import com.efecandonmez.transaction_service.dto.AccountDto;
 import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

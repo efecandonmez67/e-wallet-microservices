@@ -3,7 +3,6 @@ package com.efecandonmez.account_service.service;
 import com.efecandonmez.account_service.exception.AccountNotFoundException;
 import com.efecandonmez.account_service.model.Account;
 import com.efecandonmez.account_service.repository.AccountRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

@@ -5,7 +5,9 @@ import com.efecandonmez.transaction_service.dto.AccountDto;
 import com.efecandonmez.transaction_service.exception.InsufficientBalanceException;
 import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.repository.TransactionRepository;
+import feign.FeignException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -20,13 +22,17 @@ public class TransactionService {
         this.accountServiceClient = accountServiceClient;
     }
 
+    @Transactional
     public Transaction transfer(Long senderId, Long receiverId, BigDecimal amount) {
 
-        AccountDto sender= accountServiceClient.getAccountById(senderId).getBody();
-        AccountDto receiver= accountServiceClient.getAccountById(receiverId).getBody();
+        AccountDto sender;
+        AccountDto receiver;
 
-        if(sender == null || receiver == null) {
-            throw new RuntimeException("Sender or receiver account not found");
+        try {
+            sender = accountServiceClient.getAccountById(senderId).getBody();
+            receiver = accountServiceClient.getAccountById(receiverId).getBody();
+        } catch (FeignException.NotFound e) {
+            throw new RuntimeException("Account not found");
         }
 
         if (sender.getBalance().compareTo(amount) < 0) {
@@ -43,7 +49,14 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         accountServiceClient.updateBalance(sender.getId(), amount.negate());
-        accountServiceClient.updateBalance(receiver.getId(), amount);
+
+        try {
+            accountServiceClient.updateBalance(receiver.getId(), amount.negate());
+        } catch (Exception e) {
+            accountServiceClient.updateBalance(sender.getId(), amount);
+
+            throw new RuntimeException("Transfer sırasında karşı servise ulaşılamadı. İşlem iptal edildi ve bakiye iade edildi.");
+        }
 
         return transaction;
 

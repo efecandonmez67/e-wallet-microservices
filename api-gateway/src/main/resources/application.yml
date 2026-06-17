@@ -15,7 +15,7 @@ spring:
         - id: transaction-service
           uri: lb://TRANSACTION-SERVICE
           predicates:
-            - Path=/api/v1/transactions/**
+            - Path=/api/v1/transaction/**
 
 eureka:
   client:

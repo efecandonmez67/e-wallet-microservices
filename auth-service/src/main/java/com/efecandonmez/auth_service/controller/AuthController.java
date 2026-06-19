@@ -1,5 +1,6 @@
 package com.efecandonmez.auth_service.controller;
 
+import com.efecandonmez.auth_service.dto.LoginRequest;
 import com.efecandonmez.auth_service.dto.RegisterRequest;
 import com.efecandonmez.auth_service.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 
 }

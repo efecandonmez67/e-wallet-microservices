@@ -1,8 +1,7 @@
 package com.efecandonmez.transaction_service.controller;
 
-import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.service.TransactionService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +18,16 @@ public class TransactionController{
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<Transaction> transferMoney(
+    public ResponseEntity<String> transferMoney(
             @RequestParam Long senderId,
             @RequestParam Long receiverId,
             @RequestParam BigDecimal amount) {
 
+        transactionService.transfer(senderId, receiverId, amount);
 
-        return ResponseEntity.ok(transactionService.transfer(senderId, receiverId, amount));
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body("transfer emri alındı ve işlem sırasıne eklendi.");
+
     }
 
     

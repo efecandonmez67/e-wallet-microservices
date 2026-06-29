@@ -1,64 +1,48 @@
 package com.efecandonmez.transaction_service.service;
 
 import com.efecandonmez.transaction_service.client.AccountServiceClient;
-import com.efecandonmez.transaction_service.dto.AccountDto;
-import com.efecandonmez.transaction_service.exception.InsufficientBalanceException;
+import com.efecandonmez.transaction_service.config.RabbitMQConfig;
+import com.efecandonmez.transaction_service.dto.TransferMessage;
 import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.repository.TransactionRepository;
-import feign.FeignException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final AccountServiceClient accountServiceClient;
-
-    public TransactionService(TransactionRepository transactionRepository, AccountServiceClient accountServiceClient) {
-        this.transactionRepository = transactionRepository;
-        this.accountServiceClient = accountServiceClient;
-    }
+    private final RabbitTemplate rabbitTemplate;
 
     @Transactional
-    public Transaction transfer(Long senderId, Long receiverId, BigDecimal amount) {
+    public void transfer(Long senderId, Long receiverId, BigDecimal amount) {
 
-        AccountDto sender;
-        AccountDto receiver;
-
-        try {
-            sender = accountServiceClient.getAccountById(senderId).getBody();
-            receiver = accountServiceClient.getAccountById(receiverId).getBody();
-        } catch (FeignException.NotFound e) {
-            throw new RuntimeException("Account not found");
-        }
-
-        if (sender.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientBalanceException("yetersiz bakiye");
-        }
+        accountServiceClient.updateBalance(senderId, amount.negate());
 
         Transaction transaction = Transaction.builder()
-                .senderAccountId(sender.getId())
-                .receiverAccountId(receiver.getId())
+                .senderAccountId(senderId)
+                .receiverAccountId(receiverId)
                 .amount(amount)
-                .transactionDate(java.time.LocalDateTime.now())
+                .transactionDate(LocalDateTime.now())
                 .build();
-
         transactionRepository.save(transaction);
 
-        accountServiceClient.updateBalance(sender.getId(), amount.negate());
+        TransferMessage message= TransferMessage.builder()
+                .receiverId(receiverId)
+                .amount(amount)
+                .build();
 
-        try {
-            accountServiceClient.updateBalance(receiver.getId(), amount.negate());
-        } catch (Exception e) {
-            accountServiceClient.updateBalance(sender.getId(), amount);
 
-            throw new RuntimeException("Transfer sırasında karşı servise ulaşılamadı. İşlem iptal edildi ve bakiye iade edildi.");
-        }
+        rabbitTemplate.convertAndSend(RabbitMQConfig.TRANSFER_QUEUE, message);
 
-        return transaction;
+        System.out.println("mektup rabbite başarıyla bırakıldı." + message);
 
     }
 

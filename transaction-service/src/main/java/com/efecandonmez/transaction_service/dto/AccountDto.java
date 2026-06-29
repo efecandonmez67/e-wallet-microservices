@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class AccountDto {
 
     private Long id;
-    private Long customerId;
+    private Long userId;
     private BigDecimal balance;
 
 }

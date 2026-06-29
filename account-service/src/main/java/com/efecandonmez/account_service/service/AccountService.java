@@ -29,9 +29,9 @@ public class AccountService {
                 .orElseThrow(() -> new AccountNotFoundException("No account found for this user. UserId: " + userId));
     }
 
-    public void updateBalance(Long userId, BigDecimal amount) {
-        Account account = accountRepository.findById(userId).orElseThrow(
-                () -> new AccountNotFoundException("No account found for this user. UserId: " + userId)
+    public void updateBalance(Long accountId, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId).orElseThrow(
+                () -> new AccountNotFoundException("No account found for this user. accountId: " + accountId)
         );
 
         account.setBalance(account.getBalance().add(amount));

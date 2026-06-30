@@ -1,4 +1,4 @@
-package com.efecandonmez.transaction_service.dto;
+package com.efecandonmez.account_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,17 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferMessage {
+public class RefundMessage {
 
     private Long senderId;
-    private Long receiverId;
     private BigDecimal amount;
-
-
+    private String reason;
+    private LocalDateTime timestamp;
 
 }

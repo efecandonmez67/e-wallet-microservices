@@ -35,6 +35,7 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         TransferMessage message= TransferMessage.builder()
+                .senderId(senderId)
                 .receiverId(receiverId)
                 .amount(amount)
                 .build();

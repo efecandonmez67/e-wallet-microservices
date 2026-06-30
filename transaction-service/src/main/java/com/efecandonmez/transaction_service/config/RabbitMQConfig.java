@@ -17,6 +17,11 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue refundQueue() {
+        return new Queue("refund_queue",true);
+    }
+
+    @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }

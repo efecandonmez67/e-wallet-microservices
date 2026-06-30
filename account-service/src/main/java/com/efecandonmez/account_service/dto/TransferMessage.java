@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TransferMessage {
 
+    private Long senderId;
     private Long receiverId;
     private BigDecimal amount;
 }

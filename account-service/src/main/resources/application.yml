@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: account-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   datasource:
     url: jdbc:postgresql://localhost:5441/account_db
     username: root
@@ -24,15 +29,5 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
-    ip-address: 127.0.0.1
-    hostname: localhost
-    instance-id: ${spring.application.name}:${random.value}
 
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest

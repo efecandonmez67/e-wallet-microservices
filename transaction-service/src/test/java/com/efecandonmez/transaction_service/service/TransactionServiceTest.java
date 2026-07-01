@@ -33,13 +33,13 @@ public class TransactionServiceTest {
 
         AccountDto senderAccount = AccountDto.builder()
                 .id(10L)
-                .customerId(senderId)
+                .userId(senderId)
                 .balance(new BigDecimal("100.00"))
                 .build();
 
         AccountDto receiverAccount = AccountDto.builder()
                 .id(20L)
-                .customerId(receiverId)
+                .userId(receiverId)
                 .balance(new BigDecimal("500.00"))
                 .build();
 
@@ -67,13 +67,13 @@ public class TransactionServiceTest {
 
         AccountDto senderAccount= AccountDto.builder()
                 .id(10L)
-                .customerId(senderId)
+                .userId(senderId)
                 .balance(new BigDecimal("1000.00"))
                 .build();
 
         AccountDto receiverAccount= AccountDto.builder()
                 .id(20L)
-                .customerId(receiverId)
+                .userId(receiverId)
                 .balance(new BigDecimal("500.00"))
                 .build();
 

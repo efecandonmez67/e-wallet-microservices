@@ -21,7 +21,7 @@ public class RefundMessageListener {
                 message.getReason(), message.getSenderId(), message.getAmount());
 
         try {
-            accountServiceClient.updateBalance(message.getSenderId(), message.getAmount());
+            accountServiceClient.deposit(message.getSenderId(), message.getAmount());
             log.info("iade basariya tamamlandi. para {} numaralı hesaba geri yuklendi.", message.getSenderId());
         } catch (Exception e) {
             log.error("iade islemi sirasinda bir hata olustu. {}", e.getMessage());

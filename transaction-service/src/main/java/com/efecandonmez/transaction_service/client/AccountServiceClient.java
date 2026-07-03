@@ -16,5 +16,8 @@ public interface AccountServiceClient {
     @PutMapping("/api/v1/accounts/{id}/withdraw")
     ResponseEntity<Void> withDraw(@PathVariable("id") Long accountId, @RequestParam("amount")BigDecimal amount);
 
+    @PutMapping("/api/v1/accounts/{id}/deposit")
+    ResponseEntity<Void> deposit(@PathVariable("id") Long accountId, @RequestParam("amount") BigDecimal amount);
+
 
 }

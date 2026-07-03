@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 public interface AccountServiceClient {
 
     @GetMapping("/api/v1/accounts/{id}")
-    ResponseEntity<AccountDto> getAccountById(@PathVariable("id") Long userId);
+    ResponseEntity<AccountDto> getAccountById(@PathVariable("id") Long accountId);
 
-    @PutMapping("/api/v1/accounts/{id}/balance")
-    ResponseEntity<Void> updateBalance(@PathVariable("id") Long userId, @RequestParam("amount")BigDecimal amount);
+    @PutMapping("/api/v1/accounts/{id}/withdraw")
+    ResponseEntity<Void> withDraw(@PathVariable("id") Long accountId, @RequestParam("amount")BigDecimal amount);
 
 
 }

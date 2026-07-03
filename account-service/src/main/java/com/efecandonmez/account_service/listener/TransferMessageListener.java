@@ -22,7 +22,7 @@ public class TransferMessageListener {
     @RabbitListener(queues = "transfer_queue")
     public void receiveTransferMessage(TransferMessage message) {
         try {
-            accountService.updateBalance(message.getReceiverId(), message.getAmount());
+            accountService.deposit(message.getReceiverId(), message.getAmount());
             log.info("transfer işlemi asenkron olarak tamamlandı. alıcı id: {}, miktar: {}", message.getReceiverId(), message.getAmount());
 
         } catch (Exception e) {

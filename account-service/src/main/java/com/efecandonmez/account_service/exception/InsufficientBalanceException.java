@@ -1,5 +1,4 @@
-package com.efecandonmez.transaction_service.exception;
-
+package com.efecandonmez.account_service.exception;
 
 public class InsufficientBalanceException extends RuntimeException {
 

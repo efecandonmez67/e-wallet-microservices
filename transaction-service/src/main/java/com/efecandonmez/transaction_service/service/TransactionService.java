@@ -24,7 +24,7 @@ public class TransactionService {
     @Transactional
     public void transfer(Long senderId, Long receiverId, BigDecimal amount) {
 
-        accountServiceClient.updateBalance(senderId, amount.negate());
+        accountServiceClient.withDraw(senderId, amount);
 
         Transaction transaction = Transaction.builder()
                 .senderAccountId(senderId)

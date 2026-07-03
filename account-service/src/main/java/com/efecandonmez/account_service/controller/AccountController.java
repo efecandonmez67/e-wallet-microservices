@@ -34,10 +34,14 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    @PutMapping("/{id}/balance")
-    public ResponseEntity<Void> updateBalance(@PathVariable Long id, @RequestParam BigDecimal amount) {
-        accountService.updateBalance(id, amount);
-        return ResponseEntity.ok().build();
+    @PutMapping("/{id}/deposit")
+    public ResponseEntity<Account> deposit(@PathVariable("id") Long id, @RequestParam BigDecimal amount) {
+        return ResponseEntity.ok(accountService.deposit(id, amount));
+    }
+
+    @PutMapping("/{id}/withdraw")
+    public ResponseEntity<Account> withdraw(@PathVariable("id") Long id, @RequestParam BigDecimal amount) {
+        return ResponseEntity.ok(accountService.withdraw(id, amount));
     }
 
 }

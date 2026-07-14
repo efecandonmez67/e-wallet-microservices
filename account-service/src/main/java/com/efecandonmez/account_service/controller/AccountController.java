@@ -40,8 +40,8 @@ public class AccountController {
     }
 
     @PutMapping("/{id}/withdraw")
-    public ResponseEntity<Account> withdraw(@PathVariable("id") Long id, @RequestParam BigDecimal amount) {
-        return ResponseEntity.ok(accountService.withdraw(id, amount));
+    public ResponseEntity<Account> withDraw(@PathVariable("id") Long id, @RequestParam BigDecimal amount) {
+        return ResponseEntity.ok(accountService.withDraw(id, amount));
     }
 
 }

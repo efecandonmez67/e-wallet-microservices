@@ -40,7 +40,7 @@ public class AccountService {
     }
 
     @Transactional
-    public Account withdraw(Long accountId, BigDecimal amount) {
+    public Account withDraw(Long accountId, BigDecimal amount) {
 
         Account account= accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Insufficient balance: " + accountId) );

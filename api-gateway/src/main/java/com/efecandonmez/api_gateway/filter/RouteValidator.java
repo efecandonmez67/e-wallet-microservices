@@ -12,13 +12,23 @@ import java.util.function.Predicate;
         public static final List<String> openApiEndpoints = List.of(
                 "/api/v1/auth/register",
                 "/api/v1/auth/login",
-                "/eureka"
+                "/eureka",
+                "/swagger-ui",
+                "/swagger-ui.html",
+                "/v3/api-docs",
+                "/api/v1/auth/v3/api-docs",
+                "/api/v1/accounts/v3/api-docs",
+                "/api/v1/transaction/v3/api-docs",
+                "/webjars"
         );
 
     public Predicate<ServerHttpRequest> isSecured =
             request -> openApiEndpoints
                     .stream()
                     .noneMatch(uri -> request.getURI().getPath().contains(uri));
+
+
+
 }
 
 

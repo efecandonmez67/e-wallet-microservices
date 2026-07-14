@@ -1,5 +1,6 @@
 server:
   port: 8083
+  forward-headers-strategy: framework
 
 spring:
   application:
@@ -26,3 +27,7 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     hostname: ${EUREKA_HOSTNAME:localhost}
+
+springdoc:
+  api-docs:
+    path: /api/v1/auth/v3/api-docs

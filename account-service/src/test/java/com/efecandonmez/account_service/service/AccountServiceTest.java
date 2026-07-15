@@ -1,8 +1,7 @@
-package com.efecandonmez.account_service;
+package com.efecandonmez.account_service.service;
 
 import com.efecandonmez.account_service.model.Account;
 import com.efecandonmez.account_service.repository.AccountRepository;
-import com.efecandonmez.account_service.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

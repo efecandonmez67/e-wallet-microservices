@@ -1,17 +1,25 @@
 package com.efecandonmez.transaction_service.service;
 
 import com.efecandonmez.transaction_service.client.AccountServiceClient;
-import com.efecandonmez.transaction_service.dto.AccountDto;
+import com.efecandonmez.transaction_service.config.RabbitMQConfig;
+import com.efecandonmez.transaction_service.dto.TransferMessage;
+import com.efecandonmez.transaction_service.exception.InsufficientBalanceException;
 import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
@@ -22,76 +30,46 @@ public class TransactionServiceTest {
     @Mock
     private AccountServiceClient accountServiceClient;
 
+    @Mock
+    private RabbitTemplate rabbitTemplate;
+
     @InjectMocks
     private TransactionService transactionService;
 
-    @Test
-    void transfer_withInsufficientBalance_shouldThrowRuntimeException() {
-        Long senderId = 1L;
-        Long receiverId = 2L;
-        BigDecimal transferAmount = new BigDecimal("150.00");
-
-        AccountDto senderAccount = AccountDto.builder()
-                .id(10L)
-                .userId(senderId)
-                .balance(new BigDecimal("100.00"))
-                .build();
-
-        AccountDto receiverAccount = AccountDto.builder()
-                .id(20L)
-                .userId(receiverId)
-                .balance(new BigDecimal("500.00"))
-                .build();
-
-        Mockito.when(accountServiceClient.getAccountById(senderId))
-                .thenReturn(org.springframework.http.ResponseEntity.ok(senderAccount));
-
-        Mockito.when(accountServiceClient.getAccountById(receiverId))
-                .thenReturn(org.springframework.http.ResponseEntity.ok(receiverAccount));
-
-
-        RuntimeException exception = org.junit.jupiter.api.Assertions.assertThrows(
-                RuntimeException.class,
-                () -> transactionService.transfer(senderId, receiverId, transferAmount)
-        );
-
-        org.junit.jupiter.api.Assertions.assertEquals("yetersiz bakiye", exception.getMessage());
-    }
 
     @Test
-    void transfer_withSufficientBalance_shouldCompleteSuccessfully() {
+    public void transfer_Successfull() {
 
         Long senderId = 1L;
         Long receiverId = 2L;
-        BigDecimal transferAmount = new BigDecimal("50.00");
-
-        AccountDto senderAccount= AccountDto.builder()
-                .id(10L)
-                .userId(senderId)
-                .balance(new BigDecimal("1000.00"))
-                .build();
-
-        AccountDto receiverAccount= AccountDto.builder()
-                .id(20L)
-                .userId(receiverId)
-                .balance(new BigDecimal("500.00"))
-                .build();
-
-
-        Mockito.when(accountServiceClient.getAccountById(senderId))
-                .thenReturn(org.springframework.http.ResponseEntity.ok(senderAccount));
-
-        Mockito.when(accountServiceClient.getAccountById(receiverId))
-                .thenReturn(org.springframework.http.ResponseEntity.ok(receiverAccount));
+        BigDecimal transferAmount= new BigDecimal("50.00");
 
         transactionService.transfer(senderId, receiverId, transferAmount);
 
-        Mockito.verify(accountServiceClient).updateBalance(senderAccount.getId(), transferAmount.negate());
+        verify(accountServiceClient, times(1)).withDraw(senderId, transferAmount);
 
-        Mockito.verify(accountServiceClient).updateBalance(receiverAccount.getId(), transferAmount);
+        verify(transactionRepository, times(1)).save(any(Transaction.class));
 
-        Mockito.verify(transactionRepository).save(Mockito.any(Transaction.class));
-
+        verify(rabbitTemplate, times(1)).convertAndSend(eq(RabbitMQConfig.TRANSFER_QUEUE), any(TransferMessage.class));
     }
+
+    @Test
+    public void transfer_withInsufficientBalance_shouldThrowException() {
+        Long senderId = 1L;
+        Long receiverId = 2L;
+        BigDecimal transferAmount= new BigDecimal("150.00");
+
+        doThrow(new InsufficientBalanceException("yetersiz bakiye")).when(accountServiceClient).withDraw(senderId, transferAmount);
+
+        assertThrows(InsufficientBalanceException.class, () -> {
+            transactionService.transfer(senderId, receiverId, transferAmount);
+        });
+
+        verify(transactionRepository, never()).save(any(Transaction.class));
+
+        verify(rabbitTemplate, never()).convertAndSend(anyString(), any(TransferMessage.class));
+    }
+
+
 
 }

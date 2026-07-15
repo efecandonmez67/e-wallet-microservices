@@ -32,6 +32,7 @@ public class Transaction {
     private BigDecimal amount;
 
     @Column(name = "transactionDate", updatable = false)
+    @Builder.Default
     private LocalDateTime transactionDate=LocalDateTime.now();
 
 

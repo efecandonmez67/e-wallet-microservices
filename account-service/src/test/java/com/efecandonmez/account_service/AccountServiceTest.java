@@ -64,6 +64,40 @@ public class AccountServiceTest {
         verify(accountRepository, never()).save(any(Account.class));
     }
 
+    @Test
+    public void testDeposit_Successfull() {
+        Long accountId = 1L;
+        Double depositAmount = 50.0;
+
+        Account dummyAccount = new Account();
+        dummyAccount.setId(accountId);
+        dummyAccount.setBalance(BigDecimal.valueOf(100.0));
+
+        when(accountRepository.findById(accountId)).thenReturn(Optional.of(dummyAccount));
+
+        when(accountRepository.save(any(Account.class))).thenReturn(dummyAccount);
+
+        Account result= accountService.deposit(accountId, BigDecimal.valueOf(depositAmount));
+
+        assertEquals(BigDecimal.valueOf(150.0), result.getBalance());
+
+        verify(accountRepository, times(1)).save(dummyAccount);
+    }
+
+    @Test
+    public void testAccountNotFound() {
+        Long nonExistentAccountId = 99L;
+
+        when(accountRepository.findById(nonExistentAccountId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> {
+            accountService.deposit(nonExistentAccountId, BigDecimal.valueOf(50.0));
+        });
+
+        verify(accountRepository, never()).save(any(Account.class));
+
+    }
+
 
 
 }

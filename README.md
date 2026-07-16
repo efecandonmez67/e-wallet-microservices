@@ -41,3 +41,13 @@ Navigate to the root directory where the `docker-compose.yml` is located and sta
 
 ```bash
 docker-compose up -d
+```
+### 2. Microservices Setup
+Open the project in your IDE (IntelliJ IDEA / Eclipse) and start the Spring Boot services strictly in the following order to ensure proper registration:
+
+1. `eureka-server` *(Wait for it to start completely)*
+2. `api-gateway`
+3. `auth-service`
+4. `account-service` & `transaction-service`
+
+Once all services are up and running, all client requests should be directed to the API Gateway at `http://localhost:8080`.

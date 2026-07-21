@@ -40,6 +40,13 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
                 try {
                     jwtUtil.validateToken(authHeader);
+                    String userId = jwtUtil.extractUserId(authHeader);
+
+                    exchange = exchange.mutate()
+                            .request(exchange.getRequest().mutate()
+                                    .header("X-User-Id", userId)
+                                    .build())
+                            .build();
                 } catch (Exception e) {
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                     return exchange.getResponse().setComplete();

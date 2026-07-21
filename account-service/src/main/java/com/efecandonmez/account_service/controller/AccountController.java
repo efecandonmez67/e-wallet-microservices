@@ -3,7 +3,6 @@ package com.efecandonmez.account_service.controller;
 import com.efecandonmez.account_service.dto.CreateAccountRequest;
 import com.efecandonmez.account_service.model.Account;
 import com.efecandonmez.account_service.service.AccountService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +25,12 @@ public class AccountController {
         Account createdAccount= accountService.createAccount(request.userId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAccount);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Account> getMyAccount(@RequestHeader("X-User-Id") Long userId) {
+        Account account = accountService.getAccountByUserId(userId);
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/{userId}")

@@ -15,6 +15,15 @@ public class JwtUtil {
         Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
     }
 
+    public String extractUserId(final String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("userId").toString();
+    }
+
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }

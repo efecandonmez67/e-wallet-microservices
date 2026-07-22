@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,10 @@ public class TransactionService {
 
         System.out.println("mektup rabbite başarıyla bırakıldı." + message);
 
+    }
+
+    public List<Transaction> getTransactionHistory(Long accountId) {
+        return transactionRepository.findBySenderAccountIdOrReceiverAccountIdOrderByTransactionDateDesc(accountId, accountId);
     }
 
 }

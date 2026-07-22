@@ -1,11 +1,13 @@
 package com.efecandonmez.transaction_service.controller;
 
+import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.service.TransactionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transaction")
@@ -27,6 +29,14 @@ public class TransactionController{
 
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body("transfer emri alındı ve işlem sırasıne eklendi.");
+
+    }
+
+    @GetMapping("/history/{accountId}")
+    public ResponseEntity<List<Transaction>> getTransactionHistory(@PathVariable Long accountId) {
+
+        List<Transaction> history = transactionService.getTransactionHistory(accountId);
+        return ResponseEntity.ok(history);
 
     }
 

@@ -41,6 +41,20 @@ services:
     volumes:
       - auth-db-data:/var/lib/postgresql/data
 
+  bill-db:
+    image: postgres:15-alpine
+    container_name: bill-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bill_db
+    ports:
+      - "5444:5432"
+    networks:
+      - e-wallet-network
+    volumes:
+      - bill-db-data:/var/lib/postgresql/data
+
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
     container_name: rabbitmq
@@ -137,6 +151,26 @@ services:
     networks:
       - e-wallet-network
 
+  bill-service:
+    build:
+      context: ./bill-service
+    container_name: bill-service
+    depends_on:
+      - eureka-server
+      - bill-db
+      - rabbitmq
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://bill-db:5432/bill_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - EUREKA_INSTANCE_HOSTNAME=bill-service
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+      - EUREKA_INSTANCE_IP_ADDRESS=bill-service
+    networks:
+      - e-wallet-network
+
 networks:
   e-wallet-network:
     driver: bridge
@@ -145,3 +179,4 @@ volumes:
   account-db-data:
   transaction-db-data:
   auth-db-data:
+  bill-db-data:

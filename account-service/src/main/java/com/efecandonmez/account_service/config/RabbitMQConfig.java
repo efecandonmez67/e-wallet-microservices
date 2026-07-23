@@ -15,7 +15,12 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue queue() {
+    public Queue refundQueue() {
         return new Queue("refund_queue", true);
+    }
+
+    @Bean
+    public Queue billPaymentQueue() {
+        return new Queue("bill.payment.queue", true);
     }
 }

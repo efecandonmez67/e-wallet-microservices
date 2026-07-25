@@ -5,9 +5,7 @@ server:
 spring:
   application:
     name: bill-service
-  cloud:
-    compatibility-verifier:
-      enabled: false
+
   rabbitmq:
     host: localhost
     port: 5672

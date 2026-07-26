@@ -29,6 +29,11 @@ public class AccountService {
                 .orElseThrow(() -> new AccountNotFoundException("No account found for this user. UserId: " + userId));
     }
 
+    public Account getAccountById(Long id) {
+        return accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hesap bulunamadı! ID: " + id));
+    }
+
     @Transactional
     public Account deposit(Long accountId, BigDecimal amount) {
 

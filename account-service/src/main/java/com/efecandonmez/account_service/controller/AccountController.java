@@ -39,6 +39,12 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
+    @GetMapping("/{id}/balance")
+    public ResponseEntity<BigDecimal> getBalance(@PathVariable("id") Long id) {
+        Account account = accountService.getAccountById(id);
+        return ResponseEntity.ok(account.getBalance());
+    }
+
     @PutMapping("/{id}/deposit")
     public ResponseEntity<Account> deposit(@PathVariable("id") Long id, @RequestParam BigDecimal amount) {
         return ResponseEntity.ok(accountService.deposit(id, amount));

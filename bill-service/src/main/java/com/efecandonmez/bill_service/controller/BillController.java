@@ -24,6 +24,13 @@ public class BillController {
 
     @PostMapping("/pay/{billId}")
     public ResponseEntity<String> payBill(@PathVariable Long billId) {
-        return ResponseEntity.ok(billService.payBill(billId));
+        try {
+            String result = billService.payBill(billId);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("İşlem sırasında bir hata oluştu.");
+        }
     }
 }

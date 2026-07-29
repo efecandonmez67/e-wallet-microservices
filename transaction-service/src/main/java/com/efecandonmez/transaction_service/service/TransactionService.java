@@ -7,6 +7,8 @@ import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +50,7 @@ public class TransactionService {
 
     }
 
-    public List<Transaction> getTransactionHistory(Long accountId) {
-        return transactionRepository.findBySenderAccountIdOrReceiverAccountIdOrderByTransactionDateDesc(accountId, accountId);
-    }
+    public Page<Transaction> getTransactionHistory(Long accountId, Pageable pageable) {
+        return transactionRepository.findBySenderAccountIdOrReceiverAccountId(accountId, accountId, pageable);    }
 
 }

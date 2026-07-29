@@ -2,6 +2,10 @@ package com.efecandonmez.transaction_service.controller;
 
 import com.efecandonmez.transaction_service.model.Transaction;
 import com.efecandonmez.transaction_service.service.TransactionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +37,18 @@ public class TransactionController{
     }
 
     @GetMapping("/history/{accountId}")
-    public ResponseEntity<List<Transaction>> getTransactionHistory(@PathVariable Long accountId) {
+    public ResponseEntity<Page<Transaction>> getTransactionHistory(
+            @PathVariable Long accountId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        // 1. Sayfalama ve Sıralama Ayarı (En yeni işlemler en üstte)
+        Pageable pageable = PageRequest.of(page, size, Sort.by("transactionDate").descending());
 
-        List<Transaction> history = transactionService.getTransactionHistory(accountId);
+        // 2. Servis çağrısı (Artık List yerine Page dönüyor ve pageable parametresi alıyor)
+        Page<Transaction> history = transactionService.getTransactionHistory(accountId, pageable);
+
         return ResponseEntity.ok(history);
-
     }
 
     

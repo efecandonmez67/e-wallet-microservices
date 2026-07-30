@@ -59,4 +59,12 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    public void updateFcmToken(Long accountId, String token) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Hesap bulunamadı"));
+
+        account.setFcmToken(token);
+        accountRepository.save(account);
+    }
+
 }

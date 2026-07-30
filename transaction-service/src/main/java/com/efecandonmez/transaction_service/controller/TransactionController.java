@@ -42,10 +42,8 @@ public class TransactionController{
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        // 1. Sayfalama ve Sıralama Ayarı (En yeni işlemler en üstte)
         Pageable pageable = PageRequest.of(page, size, Sort.by("transactionDate").descending());
 
-        // 2. Servis çağrısı (Artık List yerine Page dönüyor ve pageable parametresi alıyor)
         Page<Transaction> history = transactionService.getTransactionHistory(accountId, pageable);
 
         return ResponseEntity.ok(history);

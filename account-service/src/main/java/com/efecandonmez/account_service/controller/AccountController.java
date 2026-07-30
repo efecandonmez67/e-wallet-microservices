@@ -6,6 +6,8 @@ import com.efecandonmez.account_service.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
@@ -53,6 +55,15 @@ public class AccountController {
     @PutMapping("/{id}/withdraw")
     public ResponseEntity<Account> withDraw(@PathVariable("id") Long id, @RequestParam BigDecimal amount) {
         return ResponseEntity.ok(accountService.withDraw(id, amount));
+    }
+
+    @PostMapping("/{accountId}/fcm-token")
+    public ResponseEntity<String> updateFcmToken(
+            @PathVariable Long accountId,
+            @RequestParam String token) {
+
+        accountService.updateFcmToken(accountId, token);
+        return ResponseEntity.ok("FCM Token başarıyla güncellendi.");
     }
 
 }
